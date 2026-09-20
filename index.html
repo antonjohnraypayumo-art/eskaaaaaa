@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4C1D95">
+  <title>A little question 💜</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💜</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Shared heart shape used by the glowing hearts -->
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="heartGradient" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#C4B5FD"/>
+        <stop offset="0.5" stop-color="#8B5CF6"/>
+        <stop offset="1" stop-color="#4C1D95"/>
+      </linearGradient>
+      <symbol id="heartShape" viewBox="0 0 32 29">
+        <path fill="url(#heartGradient)" d="M23.6 0c-3.4 0-5.6 2-7.6 4.3C14 2 11.8 0 8.4 0 3.8 0 0 3.6 0 8.3c0 7.2 8.6 12.4 14.4 19.1.7.8 1.5 1.6 1.6 1.6s.9-.8 1.6-1.6C23.4 20.7 32 15.5 32 8.3 32 3.6 28.2 0 23.6 0z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- Animated background -->
+  <div class="bg" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="floaters" id="floaters"></div>
+  </div>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <main class="stage" id="stage">
+
+    <!-- ============ SCREEN 1: THE NOTE ============ -->
+    <section class="screen card" data-screen="intro" aria-labelledby="introTitle">
+      <p class="pill reveal" style="--i:0">💌 A little note first</p>
+      <h1 id="introTitle" class="sr-only" tabindex="-1" data-focus>A note for Ika</h1>
+
+      <div class="letter">
+        <p class="reveal" style="--i:1"><span class="hi">Hi, Iska.</span> I know it’s kinda sudden to ask this, but I’m really interested in getting to know you more. I don’t want you to just be someone I met and spent a day with, na hinatid lang kita, and then that’s it. I genuinely want to know you better and understand you more.</p>
+        <p class="reveal" style="--i:2">So, I’m asking you out. If it’s okay with you, I actually have a little gift for you too.</p>
+        <p class="reveal" style="--i:3">Would you like to go out with me tomorrow? Maybe coffee?</p>
+      </div>
+
+      <div class="actions-single reveal" style="--i:4">
+        <button type="button" class="btn btn-primary" id="introContinue">Continue 💜</button>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 2: THE QUESTION ============ -->
+    <section class="screen card" data-screen="question" aria-labelledby="questionTitle">
+      <p class="eyebrow reveal" style="--i:0">Hey, I have an important question… 💜</p>
+      <h2 id="questionTitle" class="headline reveal" style="--i:1" tabindex="-1" data-focus>Will you go on a date with me?</h2>
+      <p class="sub reveal" style="--i:2">I promise it’ll be fun 😊</p>
+
+      <div class="arena" id="arena">
+        <button type="button" class="btn btn-yes" id="yesBtn">YES 💜</button>
+        <span class="no-slot" id="noSlot">
+          <button type="button" class="btn btn-no" id="noBtn">No</button>
+        </span>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 3: YAY ============ -->
+    <section class="screen card card-center" data-screen="yes" aria-labelledby="yesTitle">
+      <div class="heart-stage" aria-hidden="true">
+        <div class="heart-glow"></div>
+        <svg class="heart" viewBox="0 0 32 29"><use href="#heartShape"/></svg>
+      </div>
+      <h2 id="yesTitle" class="headline reveal" style="--i:1" tabindex="-1" data-focus>YAY! 💜 It’s a date!</h2>
+      <p class="sub reveal" style="--i:2">Okay, let’s figure out the details 😊</p>
+      <div class="actions-single reveal" style="--i:3">
+        <button type="button" class="btn btn-primary" id="toDetails">Let’s plan it 💜</button>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 4: DETAILS ============ -->
+    <section class="screen card" data-screen="details" aria-labelledby="detailsTitle">
+      <button type="button" class="back-link" id="backBtn">← Back</button>
+
+      <h2 id="detailsTitle" class="headline headline-md reveal" style="--i:0" tabindex="-1" data-focus>Let’s plan our date 💜</h2>
+      <p class="sub reveal" style="--i:1">When are you free?</p>
+
+      <form id="dateForm" class="form" novalidate autocomplete="off">
+        <div class="field reveal" style="--i:2">
+          <label for="fPlace"><span class="ico" aria-hidden="true">📍</span> Where would you like to go?</label>
+          <input type="text" id="fPlace" name="place" maxlength="120" placeholder="Coffee shop, restaurant, park, etc." aria-describedby="errPlace" required>
+          <p class="error" id="errPlace" role="alert"></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field reveal" style="--i:3">
+            <label for="fDay"><span class="ico" aria-hidden="true">📅</span> What day are you free?</label>
+            <input type="text" id="fDay" name="day" maxlength="60" placeholder="Tomorrow, Saturday, Oct 3…" aria-describedby="errDay" required>
+            <p class="error" id="errDay" role="alert"></p>
+          </div>
+
+          <div class="field reveal" style="--i:4">
+            <label for="fTime"><span class="ico" aria-hidden="true">⏰</span> What time works for you?</label>
+            <input type="text" id="fTime" name="time" maxlength="60" placeholder="Morning, 3 PM, after work…" aria-describedby="errTime" required>
+            <p class="error" id="errTime" role="alert"></p>
+          </div>
+        </div>
+
+        <div class="field reveal" style="--i:5">
+          <label for="fPlan"><span class="ico" aria-hidden="true">✨</span> What would you like to do? <em>(optional)</em></label>
+          <input type="text" id="fPlan" name="plan" maxlength="120" placeholder="Dinner, coffee, movie, walk…">
+        </div>
+
+        <div class="field reveal" style="--i:6">
+          <label for="fNote"><span class="ico" aria-hidden="true">💬</span> Anything you’d like to tell me? <em>(optional)</em></label>
+          <textarea id="fNote" name="note" rows="3" maxlength="500" placeholder="Write anything you like…"></textarea>
+        </div>
+
+        <p class="fine reveal" style="--i:7">💌 When you press the button, your answers are sent to me by email.</p>
+
+        <div class="actions-single reveal" style="--i:8">
+          <button type="submit" class="btn btn-primary btn-wide" id="submitBtn">Sounds good 💜</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ SCREEN 5: CONFIRMATION LANDING ============ -->
+    <section class="screen card card-center" data-screen="done" aria-labelledby="doneTitle">
+      <div class="heart-stage heart-stage-sm" aria-hidden="true">
+        <div class="heart-glow"></div>
+        <svg class="heart" viewBox="0 0 32 29"><use href="#heartShape"/></svg>
+      </div>
+
+      <h2 id="doneTitle" class="headline reveal" style="--i:1" tabindex="-1" data-focus>Perfect! 💜</h2>
+      <p class="sub reveal" style="--i:2">It’s officially a date!</p>
+
+      <dl class="summary reveal" style="--i:3" id="summary">
+        <div class="summary-row">
+          <dt><span aria-hidden="true">📍</span> Place</dt>
+          <dd id="sumPlace"></dd>
+        </div>
+        <div class="summary-row">
+          <dt><span aria-hidden="true">📅</span> Date</dt>
+          <dd id="sumDay"></dd>
+        </div>
+        <div class="summary-row">
+          <dt><span aria-hidden="true">⏰</span> Time</dt>
+          <dd id="sumTime"></dd>
+        </div>
+        <div class="summary-row">
+          <dt><span aria-hidden="true">✨</span> Plan</dt>
+          <dd id="sumPlan"></dd>
+        </div>
+        <div class="summary-row" id="sumNoteRow" hidden>
+          <dt><span aria-hidden="true">💬</span> Note</dt>
+          <dd id="sumNote"></dd>
+        </div>
+      </dl>
+
+      <p class="looking reveal" style="--i:4">I’m looking forward to seeing you! 🥰</p>
+
+      <div class="status reveal" style="--i:5" id="sendStatus" role="status" aria-live="polite" data-state="sending">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="statusText">Sending your answer to me… 💌</span>
+      </div>
+      <div class="status-actions" id="statusActions" hidden>
+        <button type="button" class="btn btn-ghost" id="retryBtn">Try again</button>
+      </div>
+
+      <button type="button" class="text-link" id="editBtn">Change the details</button>
+    </section>
+
+  </main>
+
+  <noscript>
+    <p class="noscript">This little invitation needs JavaScript to work 💜</p>
+  </noscript>
+
+  <script src="script.js"></script>
+</body>
+</html>

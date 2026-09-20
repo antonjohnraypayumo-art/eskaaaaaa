@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#4C1D95">
+  <title>My inbox 💜</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💜</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep:#4C1D95; --royal:#6D28D9; --bright:#8B5CF6; --lavender:#C4B5FD; --soft:#EDE9FE; --pale:#F5F3FF; --ink:#24133D; --muted:#6B5B8C;
+      --font-display:'Playfair Display', Georgia, serif;
+      --font-body:'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100dvh;
+      font-family: var(--font-body); color: var(--ink);
+      background: linear-gradient(135deg, #24133D 0%, #4C1D95 45%, #6D28D9 100%) fixed;
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+    [hidden] { display: none !important; }
+    main { max-width: 640px; margin: 0 auto; padding: max(28px, env(safe-area-inset-top)) 16px 48px; }
+    h1 { margin: 0; font-family: var(--font-display); font-size: clamp(1.9rem, 6vw, 2.5rem); color: #fff; }
+    .lead { margin: .4rem 0 1.4rem; color: var(--lavender); }
+
+    .bar { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; margin-bottom: 1.2rem; }
+    .status {
+      display: inline-flex; align-items: center; gap: .55rem;
+      padding: .5rem .95rem; border-radius: 999px;
+      background: rgba(255,255,255,.14); color: #fff; font-size: .9rem; font-weight: 600;
+      border: 1px solid rgba(255,255,255,.25);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--lavender); }
+    .status[data-state="live"] .dot { background: #A78BFA; box-shadow: 0 0 10px #C4B5FD; animation: pulse 1.4s ease-in-out infinite; }
+    .status[data-state="offline"] .dot { background: #F9A8D4; }
+    @keyframes pulse { 50% { transform: scale(1.35); opacity: .6; } }
+
+    button {
+      font-family: inherit; font-weight: 600; font-size: .9rem; cursor: pointer;
+      padding: .55rem 1rem; border-radius: 999px; color: #fff;
+      background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
+    }
+    button:hover { background: rgba(255,255,255,.24); }
+    :focus-visible { outline: 3px solid var(--lavender); outline-offset: 3px; }
+
+    .card {
+      margin-bottom: 1rem; padding: 1.3rem 1.4rem; border-radius: 24px;
+      background: linear-gradient(160deg, rgba(255,255,255,.94), rgba(237,233,254,.88));
+      box-shadow: 0 24px 60px -24px rgba(0,0,0,.6), 0 0 50px rgba(139,92,246,.3);
+    }
+    .card.is-new { animation: pop .7s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes pop { from { transform: scale(.94) translateY(12px); opacity: 0; } }
+    .card-head { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; margin-bottom: .5rem; }
+    .card-title { margin: 0; font-family: var(--font-display); font-size: 1.35rem; color: var(--deep); }
+    .card-time { font-size: .85rem; color: var(--muted); white-space: nowrap; }
+    .row { display: grid; grid-template-columns: 110px 1fr; gap: .7rem; padding: .7rem 0; align-items: baseline; }
+    .row + .row { border-top: 1px solid var(--soft); }
+    .row dt { margin: 0; font-weight: 600; font-size: .92rem; color: var(--muted); }
+    .row dd { margin: 0; font-weight: 600; color: var(--deep); overflow-wrap: anywhere; white-space: pre-wrap; }
+    dl { margin: 0; }
+
+    .empty, .tip {
+      padding: 1.2rem 1.4rem; border-radius: 22px; color: #fff; line-height: 1.6;
+      background: rgba(255,255,255,.1); border: 1px dashed rgba(255,255,255,.35);
+    }
+    .empty strong { font-family: var(--font-display); font-size: 1.25rem; display: block; margin-bottom: .2rem; }
+    .tip { margin-top: 1.4rem; font-size: .92rem; border-style: solid; }
+    .tip a { color: var(--lavender); }
+    .tip code { background: rgba(0,0,0,.25); padding: .1rem .45rem; border-radius: 8px; word-break: break-all; }
+    @media (max-width: 480px) { .row { grid-template-columns: 88px 1fr; } .card-head { flex-direction: column; gap: .1rem; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>My inbox 💜</h1>
+    <p class="lead">Her answers appear here the moment she confirms.</p>
+
+    <div class="bar">
+      <span class="status" id="status" data-state="connecting" role="status" aria-live="polite">
+        <span class="dot" aria-hidden="true"></span><span id="statusText">Connecting…</span>
+      </span>
+      <button type="button" id="testBtn">Send a test</button>
+      <button type="button" id="clearBtn">Clear saved</button>
+    </div>
+
+    <div id="list" aria-live="polite"></div>
+
+    <div class="empty" id="empty">
+      <strong>Nothing yet</strong>
+      When she answers, it shows up here on its own. Keep this tab open, or use the phone app below.
+    </div>
+
+    <div class="tip">
+      <strong>Get an instant phone notification:</strong> install the free <a href="https://ntfy.sh" target="_blank" rel="noopener">ntfy</a> app,
+      tap <em>+</em>, and subscribe to this code:<br><code id="code"></code>
+      <br><br>Answers are kept online for about 12 hours. This page also saves a copy in this browser once you have opened it.
+    </div>
+  </main>
+
+  <script>
+  (() => {
+    'use strict';
+
+    // Must match NTFY_TOPIC in script.js
+    const TOPIC = 'ika-date-679oow8ejo93xxynkhjddf';
+    const SERVER = 'https://ntfy.sh';
+    const STORE_KEY = 'inbox:' + TOPIC;
+
+    const $ = (s) => document.querySelector(s);
+    const listEl = $('#list');
+    const emptyEl = $('#empty');
+    const statusEl = $('#status');
+    const statusText = $('#statusText');
+    $('#code').textContent = TOPIC;
+
+    let items = {};
+    try { items = JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { items = {}; }
+
+    function save() {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(items)); } catch (e) { /* ignore */ }
+    }
+
+    function setStatus(state, text) {
+      statusEl.dataset.state = state;
+      statusText.textContent = text;
+    }
+
+    function buildCard(it, isNew) {
+      const card = document.createElement('article');
+      card.className = 'card' + (isNew ? ' is-new' : '');
+
+      const head = document.createElement('div');
+      head.className = 'card-head';
+      const h = document.createElement('h2');
+      h.className = 'card-title';
+      h.textContent = it.title || 'New answer 💜';
+      const t = document.createElement('span');
+      t.className = 'card-time';
+      t.textContent = new Date(it.time * 1000).toLocaleString();
+      head.append(h, t);
+      card.appendChild(head);
+
+      const dl = document.createElement('dl');
+      String(it.message || '').split('\n').forEach((line) => {
+        const m = line.match(/^(\S+)\s+([^:]+):\s*(.*)$/);
+        const row = document.createElement('div');
+        row.className = 'row';
+        const dt = document.createElement('dt');
+        const dd = document.createElement('dd');
+        if (m) { dt.textContent = m[1] + ' ' + m[2]; dd.textContent = m[3]; }
+        else { dt.textContent = ''; dd.textContent = line; }
+        row.append(dt, dd);
+        dl.appendChild(row);
+      });
+      card.appendChild(dl);
+      return card;
+    }
+
+    function render(newId) {
+      const all = Object.values(items).sort((a, b) => b.time - a.time);
+      listEl.textContent = '';
+      all.forEach((it) => listEl.appendChild(buildCard(it, it.id === newId)));
+      emptyEl.hidden = all.length > 0;
+      document.title = (all.length ? '(' + all.length + ') ' : '') + 'My inbox 💜';
+    }
+
+    function add(d) {
+      if (!d || d.event !== 'message' || !d.id) return;
+      const isNew = !items[d.id];
+      items[d.id] = { id: d.id, time: d.time, title: d.title, message: d.message };
+      save();
+      render(isNew ? d.id : null);
+    }
+
+    let source = null;
+    function connect() {
+      if (source) source.close();
+      source = new EventSource(SERVER + '/' + encodeURIComponent(TOPIC) + '/sse?since=all');
+      source.onopen = () => setStatus('live', 'Live: waiting for her answer');
+      source.onerror = () => setStatus('offline', 'Reconnecting…');
+      source.addEventListener('message', (ev) => {
+        try { add(JSON.parse(ev.data)); } catch (e) { /* ignore bad frames */ }
+      });
+    }
+
+    $('#testBtn').addEventListener('click', async () => {
+      try {
+        const res = await fetch(SERVER + '/' + encodeURIComponent(TOPIC) + '?title=' + encodeURIComponent('Test 🧪'), {
+          method: 'POST',
+          body: '📍 Place: Test café\n📅 Date: Tomorrow\n⏰ Time: 3 PM\n✨ Plan: Checking that this inbox works'
+        });
+        if (!res.ok) throw new Error(res.status);
+      } catch (e) {
+        setStatus('offline', 'Could not send the test');
+      }
+    });
+
+    $('#clearBtn').addEventListener('click', () => {
+      if (!confirm('Remove the answers saved in this browser?')) return;
+      items = {};
+      save();
+      render(null);
+    });
+
+    render(null);
+    connect();
+  })();
+  </script>
+</body>
+</html>
