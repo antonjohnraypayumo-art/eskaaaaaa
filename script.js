@@ -469,26 +469,38 @@
   const noteInput = $('#fNote');
   const submitBtn = $('#submitBtn');
 
+  function readFieldValue(input) {
+    return input ? input.value.trim() : '';
+  }
+
   function setFieldError(key, message) {
     const f = fields[key];
+    if (!f || !f.input || !f.error) return;
+
     const wrap = f.input.closest('.field');
     f.error.textContent = message || '';
-    wrap.classList.toggle('has-error', Boolean(message));
+    wrap?.classList.toggle('has-error', Boolean(message));
     f.input.setAttribute('aria-invalid', message ? 'true' : 'false');
   }
 
   Object.keys(fields).forEach((key) => {
-    fields[key].input.addEventListener('input', () => {
-      if (fields[key].input.value.trim()) setFieldError(key, '');
+    const field = fields[key];
+    if (!field.input) return;
+
+    field.input.addEventListener('input', () => {
+      if (field.input.value.trim()) setFieldError(key, '');
     });
   });
 
   function validateForm() {
     let firstInvalid = null;
     Object.keys(fields).forEach((key) => {
-      const empty = !fields[key].input.value.trim();
-      setFieldError(key, empty ? fields[key].message : '');
-      if (empty && !firstInvalid) firstInvalid = fields[key].input;
+      const field = fields[key];
+      if (!field.input) return;
+
+      const empty = !field.input.value.trim();
+      setFieldError(key, empty ? field.message : '');
+      if (empty && !firstInvalid) firstInvalid = field.input;
     });
     return firstInvalid;
   }
@@ -502,11 +514,11 @@
       return;
     }
 
-    state.location = fields.location.input.value.trim();
-    state.date = fields.date.input.value.trim();
-    state.time = fields.time.input.value.trim();
-    state.activity = planInput.value.trim();
-    state.note = noteInput.value.trim();
+    state.location = readFieldValue(fields.location.input);
+    state.date = readFieldValue(fields.date.input);
+    state.time = readFieldValue(fields.time.input);
+    state.activity = readFieldValue(planInput);
+    state.note = readFieldValue(noteInput);
     state.submitted = true;
 
     renderSummary();
